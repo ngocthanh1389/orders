@@ -7,14 +7,14 @@ import (
 
 const (
 	// server
-	BindAddressFlag    = "bind-address"
+	bindAddressFlag    = "bind-address"
 	defaultBindAddress = ":1234"
 )
 
 func NewAppFlags() []cli.Flag {
 	return []cli.Flag{
 		cli.StringFlag{
-			Name:   BindAddressFlag,
+			Name:   bindAddressFlag,
 			Usage:  "provide application host and port",
 			EnvVar: "BIND_ADDRESS",
 			Value:  defaultBindAddress,

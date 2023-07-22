@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/ngocthanh1389/orders/be/pkg/postgres"
+	"github.com/ngocthanh1389/orders/be/pkg/server"
 	"github.com/urfave/cli"
 	"go.uber.org/zap"
 )
@@ -22,19 +22,26 @@ func main() {
 }
 
 func run(c *cli.Context) error {
-	l, err := zap.NewDevelopment()
+	cfg := zap.NewProductionConfig()
+	cfg.OutputPaths = []string{
+		"stdout",
+		"app.log",
+	}
+	rl, err := cfg.Build()
 	if err != nil {
 		log.Fatal(err)
 	}
+	l := rl.Sugar()
+
+	l.Infow("Starting app...")
 	// database
 	db, err := postgres.NewDBFromContext(c)
 	if err != nil {
-		log.Panic("cannot init DB connection", "err", err)
+		l.Panicw("cannot init DB connection", "error", err)
 	}
-	_, err = postgres.RunMigrationUp(
-		db.DB, c.String(postgres.PostgresMigrationPath), c.String(postgres.PostgresDatabaseFlag))
-	if err != nil {
-		log.Panic("cannot init DB", "err", err)
+	if _, err := postgres.RunMigrationUp(
+		db.DB, c.String(postgres.PostgresMigrationPath), c.String(postgres.PostgresDatabaseFlag)); err != nil {
+		l.Panicw("cannot migrate DB", "error", err)
 	}
 
 	// http client
@@ -45,5 +52,6 @@ func run(c *cli.Context) error {
 	// 		ResponseHeaderTimeout: time.Second * 10,
 	// 	},
 	// }
-	return nil
+	server := server.NewServer(c.String(defaultBindAddress))
+	return server.Run()
 }

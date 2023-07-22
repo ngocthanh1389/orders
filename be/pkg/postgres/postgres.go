@@ -20,10 +20,10 @@ const (
 	DefaultPostgresPassword = "postgres"
 
 	PostgresDatabaseFlag    = "postgres-database"
-	DefaultPostgresDatabase = "poseidon"
+	DefaultPostgresDatabase = "postgres"
 
 	PostgresMigrationPath = "migration-path"
-	DefaultMigrationPath  = "./internal/executor/migrations"
+	DefaultMigrationPath  = "./internal/migrations"
 )
 
 // PostgresSQLFlags creates new cli flags for PostgreSQL client.
