@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/ngocthanh1389/orders/be/internal/service"
 	"github.com/ngocthanh1389/orders/be/pkg/postgres"
 	"github.com/ngocthanh1389/orders/be/pkg/server"
 	"github.com/urfave/cli"
@@ -52,6 +53,7 @@ func run(c *cli.Context) error {
 	// 		ResponseHeaderTimeout: time.Second * 10,
 	// 	},
 	// }
-	server := server.NewServer(c.String(defaultBindAddress))
+	server := server.NewServer(c.String(bindAddressFlag))
+	service.AddOrderService(server, db, l)
 	return server.Run()
 }
