@@ -1,8 +1,8 @@
 package service
 
 import (
-	"errors"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -40,7 +40,7 @@ func (o *order) createOrder(c *gin.Context) {
 	var req orderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		o.l.Errorw("invalid request", "err", err)
-		c.JSON(http.StatusBadRequest, util.ConstructErrResponse(err))
+		c.JSON(http.StatusBadRequest, util.ConstructErrResponse("yêu cầu không hợp lệ"))
 		return
 	}
 	o.l.Infow("receive create order request", "req", req)
@@ -48,12 +48,29 @@ func (o *order) createOrder(c *gin.Context) {
 	ok, err := o.userDAL.ValidateUser(req.Name, req.Password)
 	if err != nil {
 		o.l.Errorw("error when validate user", "err", err)
-		c.JSON(http.StatusInternalServerError, util.ConstructErrResponse(err))
+		c.JSON(http.StatusInternalServerError, util.ConstructErrResponse("hệ thống lỗi"))
 		return
 	}
 	if !ok {
 		o.l.Info("user pass isn't valid")
-		c.JSON(http.StatusNotAcceptable, util.ConstructErrResponse(errors.New("user pass isn't valid")))
+		c.JSON(http.StatusNotAcceptable, util.ConstructErrResponse("tên hoặc mật khẩu không đúng"))
 		return
 	}
+	ok, err = o.orderDAL.CheckHasOrderToday(req.Name)
+	if err != nil {
+		o.l.Errorw("error when check order today", "err", err)
+		c.JSON(http.StatusInternalServerError, util.ConstructErrResponse("hệ thống lỗi"))
+		return
+	}
+	if ok {
+		o.l.Info("user pass made order")
+		c.JSON(http.StatusNotAcceptable, util.ConstructErrResponse("đã đặt cơm rồi"))
+		return
+	}
+	if err := o.orderDAL.Insert(req.Name, time.Now()); err != nil {
+		o.l.Errorw("error when insert order", "err", err)
+		c.JSON(http.StatusInternalServerError, util.ConstructErrResponse("hệ thống lỗi"))
+		return
+	}
+	c.JSON(http.StatusAccepted, util.ConstructSuccessResponse("đặt cơm thành công"))
 }
