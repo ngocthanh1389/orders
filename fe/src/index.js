@@ -5,20 +5,26 @@ import './style.css';
 class Submit extends React.Component {
     onClick() {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://api.publicapis.org/entries');
+        xhr.open('POST', 'http://localhost:1234/order');
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.onload = function() {
-          if (xhr.status === 200) {
+        //   if (xhr.status === 200) {
             console.log(xhr.responseText)
             // setData(JSON.parse(xhr.responseText));
-          }
+        //   }
         };
-        xhr.send();
+        xhr.send(JSON.stringify({ "name": "abc", "password": "abc" }));
     }
     render() {
         return (
-            <button onClick={() => this.onClick()}>
-                Đăng ký
-            </button>
+            <div>
+                <button onClick={() => this.onClick()}>
+                    Đăng ký
+                </button>
+                <label>
+                
+                </label>
+            </div>
         )
     }
 }
