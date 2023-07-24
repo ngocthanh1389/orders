@@ -1,6 +1,9 @@
 package server
 
 import (
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +15,15 @@ type Server struct {
 
 func NewServer(addr string) *Server {
 	engine := gin.New()
-	engine.Use(gin.Recovery())
 	gin.SetMode(gin.ReleaseMode)
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowMethods = []string{"*"}
+	corsConfig.AllowBrowserExtensions = true
+	corsConfig.MaxAge = 5 * time.Minute
+	corsConfig.AllowHeaders = []string{"*"}
+	engine.Use(cors.New(corsConfig), gin.Recovery())
 
 	return &Server{
 		bindAddr: addr,
