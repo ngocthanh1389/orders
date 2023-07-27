@@ -12,6 +12,12 @@ type OrderDAL struct {
 	db *sqlx.DB
 }
 
+type OrderEntity struct {
+	ID   int64     `db:"id" json:"id"`
+	Name string    `db:"name" json:"name"`
+	Time time.Time `db:"time" json:"time"`
+}
+
 func NewOrderDAL(db *sqlx.DB) *OrderDAL {
 	return &OrderDAL{
 		db: db,
@@ -57,4 +63,24 @@ func (o *OrderDAL) Insert(name string, t time.Time) error {
 		return fmt.Errorf("run query error: %w", err)
 	}
 	return nil
+}
+
+func (o *OrderDAL) GetTodayOrder() ([]OrderEntity, error) {
+	curYear, curMonth, curDay := time.Now().Local().Date()
+	start := time.Date(curYear, curMonth, curDay, 0, 0, 0, 0, time.Local)
+	end := time.Date(curYear, curMonth, curDay, 23, 59, 59, 0, time.Local)
+	q, p, err := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar).
+		Select("*").
+		From("orders").
+		Where(squirrel.And{squirrel.Gt{"time": start}, squirrel.Lt{"time": end}}).
+		ToSql()
+	if err != nil {
+		return nil, fmt.Errorf("build query error: %w", err)
+	}
+
+	var res []OrderEntity
+	if err := o.db.Select(&res, q, p...); err != nil {
+		return nil, fmt.Errorf("run query error: %w", err)
+	}
+	return res, nil
 }

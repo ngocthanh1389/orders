@@ -34,6 +34,7 @@ func AddOrderService(s *server.Server, db *sqlx.DB, l *zap.SugaredLogger) {
 
 func (o *order) register(s *server.Server) {
 	s.Register(http.MethodPost, "order", o.createOrder)
+	s.Register(http.MethodGet, "orders", o.GetTodayOrder)
 }
 
 func (o *order) createOrder(c *gin.Context) {
@@ -73,4 +74,15 @@ func (o *order) createOrder(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusAccepted, util.ConstructSuccessResponse("đặt cơm thành công"))
+}
+
+func (o *order) GetTodayOrder(c *gin.Context) {
+	o.l.Infow("receive get orders request")
+	res, err := o.orderDAL.GetTodayOrder()
+	if err != nil {
+		o.l.Errorw("error when get orders", "error", err)
+		c.JSON(http.StatusInternalServerError, util.ConstructErrResponse("hệ thống lỗi"))
+		return
+	}
+	c.JSON(http.StatusAccepted, util.ConstructSuccessResponse(res))
 }
