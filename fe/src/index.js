@@ -11,7 +11,7 @@ class Submit extends React.Component {
     }
     onClick() {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:1234/order');
+        xhr.open('POST', 'http://35.229.224.119:1234/order');
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.onload = function() {
             console.log(xhr.responseText)
@@ -40,7 +40,7 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:1234/orders');
+        xhr.open('GET', 'http://35.229.224.119:1234/orders');
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.onload = function() {
             console.log(xhr.responseText)

@@ -8,7 +8,7 @@ import (
 const (
 	// server
 	bindAddressFlag    = "bind-address"
-	defaultBindAddress = ":1234"
+	defaultBindAddress = "0.0.0.0:1234"
 )
 
 func NewAppFlags() []cli.Flag {
