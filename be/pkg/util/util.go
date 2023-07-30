@@ -11,17 +11,18 @@ type CommonResponse struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
-func ConstructErrResponse(msg string ) CommonResponse {
+func ConstructErrResponse(msg string) CommonResponse {
 	return CommonResponse{
 		Success: false,
 		Reason:  msg,
 	}
 }
 
-func ConstructSuccessResponse(data interface{}) CommonResponse {
+func ConstructSuccessResponse(data interface{}, msg string) CommonResponse {
 	return CommonResponse{
 		Success: true,
 		Data:    data,
+		Reason:  msg,
 	}
 }
 

@@ -73,7 +73,7 @@ func (o *order) createOrder(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, util.ConstructErrResponse("hệ thống lỗi"))
 		return
 	}
-	c.JSON(http.StatusAccepted, util.ConstructSuccessResponse("đặt cơm thành công"))
+	c.JSON(http.StatusAccepted, util.ConstructSuccessResponse(nil, "đặt cơm thành công"))
 }
 
 func (o *order) GetTodayOrder(c *gin.Context) {
@@ -84,5 +84,5 @@ func (o *order) GetTodayOrder(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, util.ConstructErrResponse("hệ thống lỗi"))
 		return
 	}
-	c.JSON(http.StatusAccepted, util.ConstructSuccessResponse(res))
+	c.JSON(http.StatusAccepted, util.ConstructSuccessResponse(res, ""))
 }
