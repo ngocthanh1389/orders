@@ -44,6 +44,10 @@ class Game extends React.Component {
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.onload = function() {
             console.log(xhr.responseText)
+            let data = JSON.parse(xhr.responseText).data
+            if (data == null) {
+                return
+            }
             this.setState({ordered: JSON.parse(xhr.responseText).data})
         }.bind(this);
         xhr.onerror = function() {
@@ -54,7 +58,7 @@ class Game extends React.Component {
             name : "",
             password :"",
             ordered: [
-                {id: "1", name: "xxx"},
+                {id: "1", name: "chưa ai đặt cơm"},
             ]
         }
     }
